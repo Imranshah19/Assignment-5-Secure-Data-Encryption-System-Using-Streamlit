@@ -5,12 +5,17 @@ import time
 
 class DataStorage:
     def __init__(self, storage_file='encrypted_data.json'):
-        self.storage_file = storage_file
+        # Create a data directory if it doesn't exist
+        self.data_dir = Path('data')
+        self.data_dir.mkdir(exist_ok=True)
+        
+        # Use the data directory for storage
+        self.storage_file = self.data_dir / storage_file
         self.data = self._load_data()
     
     def _load_data(self):
         """Load data from storage file"""
-        if not Path(self.storage_file).exists():
+        if not self.storage_file.exists():
             return {}
         
         try:
@@ -21,8 +26,13 @@ class DataStorage:
     
     def _save_data(self):
         """Save data to storage file"""
-        with open(self.storage_file, 'w') as f:
-            json.dump(self.data, f)
+        try:
+            with open(self.storage_file, 'w') as f:
+                json.dump(self.data, f)
+        except Exception as e:
+            print(f"Error saving data: {str(e)}")
+            return False
+        return True
     
     def store_data(self, username, encrypted_text, passkey_hash):
         """
