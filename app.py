@@ -2,13 +2,18 @@
 
 import streamlit as st
 import time
+import os
 from encryption import encrypt_text, decrypt_text
 from auth import UserAuthManager
 from data_storage import DataStorage
 
-# Initialize managers
-auth_manager = UserAuthManager()
-data_storage = DataStorage()
+# Initialize managers with proper error handling
+try:
+    auth_manager = UserAuthManager()
+    data_storage = DataStorage()
+except Exception as e:
+    st.error(f"Error initializing application: {str(e)}")
+    st.stop()
 
 # App configuration
 st.set_page_config(
